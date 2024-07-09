@@ -5,8 +5,7 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { useAuth } from '../../utils/context/authContext';
-import { getAuthors } from '../../api/authorData';
-import { createBook, updateBook } from '../../api/bookData';
+import { createAuthor, getAuthors, updateAuthor } from '../../api/authorData';
 
 const initialState = {
   description: '',
@@ -16,7 +15,7 @@ const initialState = {
   title: '',
 };
 
-function BookForm({ obj }) {
+function AuthorForm({ obj }) {
   const [formInput, setFormInput] = useState(initialState);
   const [authors, setAuthors] = useState([]);
   const router = useRouter();
@@ -39,12 +38,12 @@ function BookForm({ obj }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (obj.firebaseKey) {
-      updateBook(formInput).then(() => router.push(`/book/${obj.firebaseKey}`));
+      updateAuthor(formInput).then(() => router.push(`/author/${obj.firebaseKey}`));
     } else {
       const payload = { ...formInput, uid: user.uid };
-      createBook(payload).then(({ name }) => {
+      createAuthor(payload).then(({ name }) => {
         const patchPayload = { firebaseKey: name };
-        updateBook(patchPayload).then(() => {
+        updateAuthor(patchPayload).then(() => {
           router.push('/');
         });
       });
@@ -98,7 +97,7 @@ function BookForm({ obj }) {
           name="author_id"
           onChange={handleChange}
           className="mb-3"
-          value={obj.author_id} // FIXME: modify code to remove error
+          value={formInput.author_id} // FIXME: modify code to remove error
           required
         >
           <option value="">Select an Author</option>
@@ -150,7 +149,7 @@ function BookForm({ obj }) {
   );
 }
 
-BookForm.propTypes = {
+AuthorForm.propTypes = {
   obj: PropTypes.shape({
     description: PropTypes.string,
     image: PropTypes.string,
@@ -162,8 +161,8 @@ BookForm.propTypes = {
   }),
 };
 
-BookForm.defaultProps = {
+AuthorForm.defaultProps = {
   obj: initialState,
 };
 
-export default BookForm;
+export default AuthorForm;
